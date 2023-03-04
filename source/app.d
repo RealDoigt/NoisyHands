@@ -131,7 +131,13 @@ auto parse (wstring src, int i = 0)
 
       case '👈':
         
-        stack.add(new Action(() {memoryPointer = memoryPointer - 1 < 0 ? memSize - 1 : memoryPointer - 1;}));
+        stack.add
+        (
+            new Action(() 
+            {
+                memoryPointer = cast(ubyte) (memoryPointer - 1 < 0 ? memSize - 1 : memoryPointer - 1);
+            })
+        );
         break;
 
       case '👉':
