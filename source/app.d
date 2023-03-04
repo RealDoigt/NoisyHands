@@ -1,15 +1,21 @@
 import raylib_misc;
-import raylib;
+import std.string;
 
-void main()
+enum noisePath = "noise/%s.mp3";
+
+void main(string[] args)
 {
-    InitWindow(1080, 720, "A raylib game");
-    SetTargetFPS(60);
-
-    while (!WindowShouldClose)
-    {
-        BeginDrawing;
-        scope (exit) EndDrawing;
-        white.ClearBackground;
-    }
+    auto audio = AudioDevice.getInstance;
+    
+    auto noises = 
+    [
+        new Snd(noisePath.format("clap")),
+        new Snd(noisePath.format("click")),
+        new Snd(noisePath.format("crack")),
+        new Snd(noisePath.format("punch")),
+        new Snd(noisePath.format("scratch")),
+        new Snd(noisePath.format("slap"))
+    ];
+    
+    
 }
