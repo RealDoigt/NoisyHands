@@ -168,7 +168,7 @@ auto parse (wstring src, int i = 0)
         (
             new Action(()
             {
-                if (registers.a > registers.b)
+                if (registerA > registerB)
                     greaterStack.s.execute;
             })
         );
@@ -183,7 +183,7 @@ auto parse (wstring src, int i = 0)
         (
             new Action(()
             {
-                if (registers.a < registers.b)
+                if (registerA < registerB)
                     lowerStack.s.execute;
             })
         );
@@ -191,22 +191,22 @@ auto parse (wstring src, int i = 0)
 
       case '✊':
         
-        stack.add(new Action(() => registers.a = memory[registers.memoryPointer]));
+        stack.add(new Action(() => registerA = currentMem));
         break;
 
       case '👊':
         
-        stack.add(new Action(() => registers.b = memory[registers.memoryPointer]));
+        stack.add(new Action(() => registerB = currentMem));
         break;
 
       case '🤛':
         
-        stack.add(new Action(() => memory[registers.memoryPointer] = registers.a));
+        stack.add(new Action(() => currentMem = registerA));
         break;
 
       case '🤜':
         
-        stack.add(new Action(() => memory[registers.memoryPointer] = registers.b));
+        stack.add(new Action(() => currentMem = registerB));
         break;
         
       default: break; // it's there because it's required.
