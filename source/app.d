@@ -61,10 +61,11 @@ auto audio = AudioDevice.getInstance;
     
     ubyte memoryPointer,
           duration,
-          volume,
           sound,
           registerA,
           registerB;
+          
+    auto volume = 0f;
           
     ubyte[memSize] memory;
     alias currentMem = memory[memoryPointer];
@@ -132,32 +133,32 @@ auto parse (wstring src, int i = 0)
 
       case '✌':
         
-        stack.add(() => volume = currentMem );
+        stack.add(new Action(() => volume = currentMem / 255f));
         break;
 
       case '🤘':
         
-        stack.push(() => registers.setSound(memory[registers.memoryPointer]));
+        stack.add(() => registers.setSound(memory[registers.memoryPointer]));
         break;
 
       case '👈':
         
-        stack.push(() => registers.setregisters.memoryPointer(registers.memoryPointer - 1));
+        stack.add(() => registers.setregisters.memoryPointer(registers.memoryPointer - 1));
         break;
 
       case '👉':
         
-        stack.push(() => registers.setregisters.memoryPointer(registers.memoryPointer + 1));
+        stack.add(() => registers.setregisters.memoryPointer(registers.memoryPointer + 1));
         break;
 
       case '👆':
         
-        stack.push(() => ++memory[registers.memoryPointer]);
+        stack.add(() => ++memory[memoryPointer]);
         break;
 
       case '👇':
         
-        stack.push(() => --memory[registers.memoryPointer]);
+        stack.add(() => --memory[memoryPointer]);
         break;
 
       case '👍':
