@@ -48,16 +48,7 @@ enum maxSound = 5,
      noisePath = "noise/%s.mp3";
 
 AudioDevice audio;
-    
-auto noises = 
-[
-    new Snd(noisePath.format("clap")),
-    new Snd(noisePath.format("click")),
-    new Snd(noisePath.format("crack")),
-    new Snd(noisePath.format("punch")),
-    new Snd(noisePath.format("scratch")),
-    new Snd(noisePath.format("slap"))
-];
+Snd[] noises;
 
 ubyte memoryPointer,
       sound,
@@ -130,7 +121,7 @@ auto parse (wstring src, int i = 0)
 
       case '✌':
         
-        stack.add(new Action(() => volume = memory[memoryPointer] / 255f));
+        stack.add(new Action(() {volume = memory[memoryPointer] / 255f}));
         break;
 
       case '🤘':
@@ -220,4 +211,14 @@ auto parse (wstring src, int i = 0)
 void main(string[] args)
 {
     audio = AudioDevice.getInstance;
+    
+    noises = 
+    [
+        new Snd(noisePath.format("clap")),
+        new Snd(noisePath.format("click")),
+        new Snd(noisePath.format("crack")),
+        new Snd(noisePath.format("punch")),
+        new Snd(noisePath.format("scratch")),
+        new Snd(noisePath.format("slap"))
+    ];
 }
