@@ -36,7 +36,38 @@ class Stack : IExecutable
     }
 }
 
-enum noisePath = "noise/%s.mp3";
+struct IndexedStack
+{
+    int i;
+    Stack s;
+}
+
+enum maxSound = 5,
+     minSound = 0,
+     memSize  = 250,
+     noisePath = "noise/%s.mp3";
+
+auto audio = AudioDevice.getInstance;
+    
+    auto noises = 
+    [
+        new Snd(noisePath.format("clap")),
+        new Snd(noisePath.format("click")),
+        new Snd(noisePath.format("crack")),
+        new Snd(noisePath.format("punch")),
+        new Snd(noisePath.format("scratch")),
+        new Snd(noisePath.format("slap"))
+    ];
+    
+    ubyte memoryPointer,
+          duration,
+          volume,
+          sound,
+          registerA,
+          registerB;
+          
+    ubyte[memSize] memory;
+    alias currentMem = memory[memoryPointer];
 
 const glyphs = 
 [  
@@ -61,70 +92,75 @@ const glyphs =
 auto parse (wstring src, int i = 0)
 {
 
-  auto stack = [];  
-  dchar[] chars = src.split;
+  Stack stack = new Stack();
 
-  for (; i < chars.length; ++i) {
-  
-    switch (chars[i]) {
+  while (i < src.length) 
+  {
+    switch (src[i]) 
+    {
+      case '👋':
       
-      case "👋":
-        
-        stack.push(() => {
-          
-          sounds[registers.sound].volume = /*registers.getVolume()*/ 0.5;
-          sounds[registers.sound].play();
-        });
+        stack.add
+        (
+            new Action
+            (() => (){
+                audio.setVolume(volume);
+                noises[sound].play;
+            })
+        );
         break;
 
-      case "✋":
-        return {stack: stack, index: i};
+      case '✋':
+        return IndexedStack(i, stack);
 
-      case "👌":
+      case '👌':
         
-        const repeatStack = parse(src, i);
-        i = repeatStack.index;
+        auto max = currentMem,
+             repeatStack = parse(src, i);
+             
+        i = repeatStack.i;
         
-        stack.push(() => {
-        
-          const max = memory[registers.memoryPointer];
-          
-          for (let j = 0; j < max; ++j)
-              repeatStack.stack.forEach(exp => exp());
-        });
+        stack.add
+        (
+            new Action
+            (() => (){
+                for (size_t j = 0; j < max; ++j)
+                    repeatStack.stack.execute;
+            })
+        );
         continue;
 
-      case "✌":
+      case '✌':
         
-        stack.push(() => registers.setVolume(memory[registers.memoryPointer]));
+        stack.add(() => volume = currentMem );
         break;
 
-      case "🤘":
+      case '🤘':
         
         stack.push(() => registers.setSound(memory[registers.memoryPointer]));
         break;
 
-      case "👈":
+      case '👈':
         
         stack.push(() => registers.setregisters.memoryPointer(registers.memoryPointer - 1));
         break;
 
-      case "👉":
+      case '👉':
         
         stack.push(() => registers.setregisters.memoryPointer(registers.memoryPointer + 1));
         break;
 
-      case "👆":
+      case '👆':
         
         stack.push(() => ++memory[registers.memoryPointer]);
         break;
 
-      case "👇":
+      case '👇':
         
         stack.push(() => --memory[registers.memoryPointer]);
         break;
 
-      case "👍":
+      case '👍':
         
         const greaterStack = parse(src, i);
         i = greaterStack.index;
@@ -136,7 +172,7 @@ auto parse (wstring src, int i = 0)
         });
         continue;
 
-      case "👎":
+      case '👎':
       
         const lowerStack = parse(src, i);
         i = lowerStack.index;
@@ -148,22 +184,22 @@ auto parse (wstring src, int i = 0)
         });
         continue;
 
-      case "✊":
+      case '✊':
         
         stack.push(() => registers.a = memory[registers.memoryPointer]);
         break;
 
-      case "👊":
+      case '👊':
         
         stack.push(() => registers.b = memory[registers.memoryPointer]);
         break;
 
-      case "🤛":
+      case '🤛':
         
         stack.push(() => memory[registers.memoryPointer] = registers.a);
         break;
 
-      case "🤜":
+      case '🤜':
         
         stack.push(() => memory[registers.memoryPointer] = registers.b);
         break;
@@ -171,35 +207,14 @@ auto parse (wstring src, int i = 0)
       default:
         console.log(chars[i]);
     }
+    
+    ++i;
   }
   
-  return {stack: stack, index: i};
+  return IndexedStack(i, stack);
 }
 
 void main(string[] args)
 {
-    auto audio = AudioDevice.getInstance;
     
-    auto noises = 
-    [
-        new Snd(noisePath.format("clap")),
-        new Snd(noisePath.format("click")),
-        new Snd(noisePath.format("crack")),
-        new Snd(noisePath.format("punch")),
-        new Snd(noisePath.format("scratch")),
-        new Snd(noisePath.format("slap"))
-    ];
-    
-    ubyte memoryPointer,
-          duration,
-          volume,
-          sound,
-          registerA,
-          registerB;
-          
-    const maxSound = 5,
-          minSound = 0,
-          memSize  = 250;
-          
-    ubyte[memSize] memory;
 }
