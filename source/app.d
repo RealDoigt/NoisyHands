@@ -141,12 +141,12 @@ auto parse (wstring src, int i = 0)
 
       case '👈':
         
-        stack.add(new Action(() => memoryPointer = memoryPointer - 1 > 0 ? memSize - 1 : memoryPointer - 1));
+        stack.add(new Action(() => memoryPointer = memoryPointer - 1 < 0 ? memSize - 1 : memoryPointer - 1));
         break;
 
       case '👉':
         
-        stack.add(new Action(() => registers.setregisters.memoryPointer(registers.memoryPointer + 1)));
+        stack.add(new Action(() => memoryPointer = memoryPointer + 1 > memSize ? 0 : memoryPointer + 1));
         break;
 
       case '👆':
