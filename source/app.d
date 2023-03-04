@@ -1,6 +1,41 @@
 import raylib_misc;
 import std.string;
 
+interface IExecutable
+{
+    void execute();
+}
+
+class Action : IExecutable
+{
+    private void delegate() action;
+    
+    this (void delegate() action)
+    {
+        this.action = action;
+    }
+    
+    override void execute()
+    {
+        action();
+    }
+}
+
+class Stack : IExecutable
+{
+    private IExecutable[] actions;
+    
+    override void execute()
+    {
+        foreach (a; actions) a.execute;
+    }
+    
+    void add(IExecutable action)
+    {
+        actions ~= action;
+    }
+}
+
 enum noisePath = "noise/%s.mp3";
 
 const glyphs = 
