@@ -124,7 +124,7 @@ auto parse (wstring src, int i = 0)
             new Action(()
             {
                 for (size_t j = 0; j < max; ++j)
-                    repeatStack.stack.execute;
+                    repeatStack.s.execute;
             })
         );
         continue;
@@ -151,36 +151,42 @@ auto parse (wstring src, int i = 0)
 
       case '👆':
         
-        stack.add(new Action(() => ++memory[memoryPointer]));
+        stack.add(new Action(() => ++currentMem));
         break;
 
       case '👇':
         
-        stack.add(new Action(() => --memory[memoryPointer]));
+        stack.add(new Action(() => --currentMem));
         break;
 
       case '👍':
         
-        const greaterStack = parse(src, i);
-        i = greaterStack.index;
+        auto greaterStack = parse(src, i);
+        i = greaterStack.i;
         
-        stack.add(new Action(() => (){
-                  
-          if (registers.a > registers.b)
-              greaterStack.stack.forEach(exp => exp());
-        }));
+        stack.add
+        (
+            new Action(()
+            {
+                if (registers.a > registers.b)
+                    greaterStack.s.execute;
+            })
+        );
         continue;
 
       case '👎':
       
-        const lowerStack = parse(src, i);
-        i = lowerStack.index;
+        auto lowerStack = parse(src, i);
+        i = lowerStack.i;
         
-        stack.add(new Action(() => (){
-                  
-          if (registers.a < registers.b)
-              lowerStack.stack.forEach(exp => exp());
-        }));
+        stack.add
+        (
+            new Action(()
+            {
+                if (registers.a < registers.b)
+                    lowerStack.s.execute;
+            })
+        );
         continue;
 
       case '✊':
