@@ -121,32 +121,32 @@ auto parse (wstring src, int i = 0)
 
       case '✌':
         
-        stack.add(new Action(() {volume = memory[memoryPointer] / 255f}));
+        stack.add(new Action(() {volume = memory[memoryPointer] / 255f;}));
         break;
 
       case '🤘':
         
-        stack.add(new Action(() => sound = memory[memoryPointer]));
+        stack.add(new Action(() {sound = memory[memoryPointer];}));
         break;
 
       case '👈':
         
-        stack.add(new Action(() => memoryPointer = memoryPointer - 1 < 0 ? memSize - 1 : memoryPointer - 1));
+        stack.add(new Action(() {memoryPointer = memoryPointer - 1 < 0 ? memSize - 1 : memoryPointer - 1;}));
         break;
 
       case '👉':
         
-        stack.add(new Action(() => memoryPointer = memoryPointer + 1 > memSize ? 0 : memoryPointer + 1));
+        stack.add(new Action(() {memoryPointer = memoryPointer + 1 > memSize ? 0 : memoryPointer + 1;}));
         break;
 
       case '👆':
         
-        stack.add(new Action(() => ++memory[memoryPointer]));
+        stack.add(new Action(() {++memory[memoryPointer];}));
         break;
 
       case '👇':
         
-        stack.add(new Action(() => --memory[memoryPointer]));
+        stack.add(new Action(() {--memory[memoryPointer];}));
         break;
 
       case '👍':
