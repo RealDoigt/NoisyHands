@@ -47,7 +47,7 @@ enum maxSound = 5,
      memSize  = 250,
      noisePath = "noise/%s.mp3";
 
-auto audio = AudioDevice.getInstance;
+AudioDevice audio;
     
 auto noises = 
 [
@@ -60,9 +60,9 @@ auto noises =
 ];
 
 ubyte memoryPointer,
-        sound,
-        registerA,
-        registerB;
+      sound,
+      registerA,
+      registerB;
         
 auto volume = 0f;
         
@@ -219,5 +219,5 @@ auto parse (wstring src, int i = 0)
 
 void main(string[] args)
 {
-    
+    audio = AudioDevice.getInstance;
 }
