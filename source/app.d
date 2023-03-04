@@ -136,27 +136,27 @@ auto parse (wstring src, int i = 0)
 
       case '🤘':
         
-        stack.add(() => registers.setSound(memory[registers.memoryPointer]));
+        stack.add(new Action(() => sound = currentMem));
         break;
 
       case '👈':
         
-        stack.add(() => registers.setregisters.memoryPointer(registers.memoryPointer - 1));
+        stack.add(new Action(() => memoryPointer = memoryPointer - 1 > 0 ? memSize - 1 : memoryPointer - 1));
         break;
 
       case '👉':
         
-        stack.add(() => registers.setregisters.memoryPointer(registers.memoryPointer + 1));
+        stack.add(new Action(() => registers.setregisters.memoryPointer(registers.memoryPointer + 1)));
         break;
 
       case '👆':
         
-        stack.add(() => ++memory[memoryPointer]);
+        stack.add(new Action(() => ++memory[memoryPointer]));
         break;
 
       case '👇':
         
-        stack.add(() => --memory[memoryPointer]);
+        stack.add(new Action(() => --memory[memoryPointer]));
         break;
 
       case '👍':
@@ -164,11 +164,11 @@ auto parse (wstring src, int i = 0)
         const greaterStack = parse(src, i);
         i = greaterStack.index;
         
-        stack.add(() => (){
+        stack.add(new Action(() => (){
                   
           if (registers.a > registers.b)
               greaterStack.stack.forEach(exp => exp());
-        });
+        }));
         continue;
 
       case '👎':
@@ -176,31 +176,31 @@ auto parse (wstring src, int i = 0)
         const lowerStack = parse(src, i);
         i = lowerStack.index;
         
-        stack.add(() => (){
+        stack.add(new Action(() => (){
                   
           if (registers.a < registers.b)
               lowerStack.stack.forEach(exp => exp());
-        });
+        }));
         continue;
 
       case '✊':
         
-        stack.add(() => registers.a = memory[registers.memoryPointer]);
+        stack.add(new Action(() => registers.a = memory[registers.memoryPointer]));
         break;
 
       case '👊':
         
-        stack.add(() => registers.b = memory[registers.memoryPointer]);
+        stack.add(new Action(() => registers.b = memory[registers.memoryPointer]));
         break;
 
       case '🤛':
         
-        stack.add(() => memory[registers.memoryPointer] = registers.a);
+        stack.add(new Action(() => memory[registers.memoryPointer] = registers.a));
         break;
 
       case '🤜':
         
-        stack.add(() => memory[registers.memoryPointer] = registers.b);
+        stack.add(new Action(() => memory[registers.memoryPointer] = registers.b));
         break;
         
       default: break; // it's there because it's required.
