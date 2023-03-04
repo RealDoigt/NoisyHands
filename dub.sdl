@@ -1,6 +1,7 @@
 name "noisyhands"
-description "NoisyHands is an assembly-like esoteric language which uses hand emojis to produce "music" from various hand noises like clapping or cracking fingers."
+description "NoisyHands is an assembly-like esoteric language"
 authors "doigt"
 license "mit"
+dependency "raylib-d" version="~>4.0.0"
 libs "raylib"
 lflags "-L./lib"
