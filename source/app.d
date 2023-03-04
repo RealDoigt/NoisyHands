@@ -101,8 +101,8 @@ auto parse (wstring src, int i = 0)
       
         stack.add
         (
-            new Action
-            (() => (){
+            new Action (()
+            {
                 audio.setVolume(volume);
                 noises[sound].play;
             })
@@ -121,8 +121,8 @@ auto parse (wstring src, int i = 0)
         
         stack.add
         (
-            new Action
-            (() => (){
+            new Action(()
+            {
                 for (size_t j = 0; j < max; ++j)
                     repeatStack.stack.execute;
             })
@@ -164,7 +164,7 @@ auto parse (wstring src, int i = 0)
         const greaterStack = parse(src, i);
         i = greaterStack.index;
         
-        stack.push(() => {
+        stack.add(() => (){
                   
           if (registers.a > registers.b)
               greaterStack.stack.forEach(exp => exp());
@@ -176,7 +176,7 @@ auto parse (wstring src, int i = 0)
         const lowerStack = parse(src, i);
         i = lowerStack.index;
         
-        stack.push(() => {
+        stack.add(() => (){
                   
           if (registers.a < registers.b)
               lowerStack.stack.forEach(exp => exp());
@@ -185,26 +185,25 @@ auto parse (wstring src, int i = 0)
 
       case '✊':
         
-        stack.push(() => registers.a = memory[registers.memoryPointer]);
+        stack.add(() => registers.a = memory[registers.memoryPointer]);
         break;
 
       case '👊':
         
-        stack.push(() => registers.b = memory[registers.memoryPointer]);
+        stack.add(() => registers.b = memory[registers.memoryPointer]);
         break;
 
       case '🤛':
         
-        stack.push(() => memory[registers.memoryPointer] = registers.a);
+        stack.add(() => memory[registers.memoryPointer] = registers.a);
         break;
 
       case '🤜':
         
-        stack.push(() => memory[registers.memoryPointer] = registers.b);
+        stack.add(() => memory[registers.memoryPointer] = registers.b);
         break;
         
-      default:
-        console.log(chars[i]);
+      default: break; // it's there because it's required.
     }
     
     ++i;
