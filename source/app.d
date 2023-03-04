@@ -60,7 +60,6 @@ auto audio = AudioDevice.getInstance;
     ];
     
     ubyte memoryPointer,
-          duration,
           sound,
           registerA,
           registerB;
@@ -72,22 +71,21 @@ auto audio = AudioDevice.getInstance;
 
 const glyphs = 
 [  
-  "👋", // play
-  "🤏", // store to duration
-  "✋", // end if/repeat
-  "👌", // repeat
-  "✌", // store to volume
-  "🤘", // store to sound type
-  "👈", // move + 1
-  "👉", // move - 1
-  "👆", // increment
-  "👇", // decrement
-  "👍", // higher than
-  "👎", // lower than
-  "✊", // store to register a
-  "👊", // store to register b
-  "🤛", // from register a
-  "🤜"  // from register b
+  '👋', // play
+  '✋', // end if/repeat
+  '👌', // repeat
+  '✌', // store to volume
+  '🤘', // store to sound type
+  '👈', // move + 1
+  '👉', // move - 1
+  '👆', // increment
+  '👇', // decrement
+  '👍', // higher than
+  '👎', // lower than
+  '✊', // store to register a
+  '👊', // store to register b
+  '🤛', // from register a
+  '🤜'  // from register b
 ];
 
 auto parse (wstring src, int i = 0)
