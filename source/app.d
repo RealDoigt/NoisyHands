@@ -49,25 +49,24 @@ enum maxSound = 5,
 
 auto audio = AudioDevice.getInstance;
     
-    auto noises = 
-    [
-        new Snd(noisePath.format("clap")),
-        new Snd(noisePath.format("click")),
-        new Snd(noisePath.format("crack")),
-        new Snd(noisePath.format("punch")),
-        new Snd(noisePath.format("scratch")),
-        new Snd(noisePath.format("slap"))
-    ];
-    
-    ubyte memoryPointer,
-          sound,
-          registerA,
-          registerB;
-          
-    auto volume = 0f;
-          
-    ubyte[memSize] memory;
-    alias currentMem = memory[memoryPointer];
+auto noises = 
+[
+    new Snd(noisePath.format("clap")),
+    new Snd(noisePath.format("click")),
+    new Snd(noisePath.format("crack")),
+    new Snd(noisePath.format("punch")),
+    new Snd(noisePath.format("scratch")),
+    new Snd(noisePath.format("slap"))
+];
+
+ubyte memoryPointer,
+        sound,
+        registerA,
+        registerB;
+        
+auto volume = 0f;
+        
+ubyte[memSize] memory;
 
 const glyphs = 
 [  
@@ -114,7 +113,7 @@ auto parse (wstring src, int i = 0)
 
       case '👌':
         
-        auto max = currentMem,
+        auto max = memory[memoryPointer],
              repeatStack = parse(src, i);
              
         i = repeatStack.i;
@@ -131,12 +130,12 @@ auto parse (wstring src, int i = 0)
 
       case '✌':
         
-        stack.add(new Action(() => volume = currentMem / 255f));
+        stack.add(new Action(() => volume = memory[memoryPointer] / 255f));
         break;
 
       case '🤘':
         
-        stack.add(new Action(() => sound = currentMem));
+        stack.add(new Action(() => sound = memory[memoryPointer]));
         break;
 
       case '👈':
@@ -151,12 +150,12 @@ auto parse (wstring src, int i = 0)
 
       case '👆':
         
-        stack.add(new Action(() => ++currentMem));
+        stack.add(new Action(() => ++memory[memoryPointer]));
         break;
 
       case '👇':
         
-        stack.add(new Action(() => --currentMem));
+        stack.add(new Action(() => --memory[memoryPointer]));
         break;
 
       case '👍':
@@ -191,22 +190,22 @@ auto parse (wstring src, int i = 0)
 
       case '✊':
         
-        stack.add(new Action(() => registerA = currentMem));
+        stack.add(new Action(() => registerA = memory[memoryPointer]));
         break;
 
       case '👊':
         
-        stack.add(new Action(() => registerB = currentMem));
+        stack.add(new Action(() => registerB = memory[memoryPointer]));
         break;
 
       case '🤛':
         
-        stack.add(new Action(() => currentMem = registerA));
+        stack.add(new Action(() => memory[memoryPointer] = registerA));
         break;
 
       case '🤜':
         
-        stack.add(new Action(() => currentMem = registerB));
+        stack.add(new Action(() => memory[memoryPointer] = registerB));
         break;
         
       default: break; // it's there because it's required.
