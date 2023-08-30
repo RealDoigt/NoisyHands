@@ -22,29 +22,34 @@ auto volume = 0f, debugging = false;
         
 ubyte[memSize] memory;
 
-const glyphs = 
-[  
-  "👋", // play
-  "✋", // end if/repeat
-  "👌", // repeat
-  "✌", // store to volume
-  "🤘", // store to sound type
-  "👈", // move + 1
-  "👉", // move - 1
-  "👆", // increment
-  "👇", // decrement
-  "👍", // higher than
-  "👎", // lower than
-  "✊", // store to register a
-  "👊", // store to register b
-  "🤛", // from register a
-  "🤜"  // from register b
-];
+/*
+  "👋", /+ play                  +/
+  "✋", /+ end if/repeat/comment +/
+  "👌", /+ repeat                +/
+  "✌", /+ store to volume       +/
+  "🤘", /+ store to sound type   +/
+  "👈", /+ move + 1              +/
+  "👉", /+ move - 1              +/
+  "👆", /+ increment             +/
+  "👇", /+ decrement             +/
+  "👍", /+ a higher than b       +/
+  "👎", /+ a lower than b        +/
+  "✊", /+ store to register a   +/
+  "👊", /+ store to register b   +/
+  "🫲", /+ from register a       +/
+  "🫱", /+ from register b       +/
+  "🤌", /+ comment               +/
+  "🖕", /+ break from repeat     +/
+  "🤏", /+ next iteration        +/
+  "🪬", /+ log values all values +/
+*/
 
 void read(string src)
 {
-    auto gsrc = src.byGrapheme.array;
-    for (size_t i, lineCount = 1, columnCount = 1; i < gsrc.length; ++i, ++columnCount)
+    // originIndices is stacks the indices where the interpret has to return to for when one or more repeats are in use
+    auto gsrc = src.byGrapheme.array, originIndices = [];
+    
+    for (size_t i, line = 1, column = 1; i < gsrc.length; ++i, ++column)
     {
         auto current = gsrc[i].array.byCodePoint.text;
         
@@ -53,8 +58,8 @@ void read(string src)
             case " ": continue;
             
             case "\n":
-                columnCount = 0;
-                ++lineCount;
+                column = 0;
+                ++line;
                 break;
                 
             case "👋": 
@@ -62,6 +67,8 @@ void read(string src)
             break;
             
             default:
+                if (debugging) 
+                    "Unrecognised glyph at line %d and column %d: %s".format(line, column, current).writeln;
             break;
         }
     }
@@ -81,5 +88,5 @@ void main(string[] args)
         new Snd(noisePath.format("slap"))
     ];
     
-    read("sdfs👋");
+    read("👋");
 }
