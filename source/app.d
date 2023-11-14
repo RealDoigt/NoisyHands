@@ -41,13 +41,13 @@ ubyte[memSize] memory;
   "🤌", /+ comment               +/
   "🖕", /+ break from repeat     +/
   "🤏", /+ next iteration        +/
-  "🪬", /+ log values all values +/
+  "🪬", /+ log all values        +/
 */
 
 void read(string src)
 {
-    // originIndices is stacks the indices where the interpret has to return to for when one or more repeats are in use
-    auto gsrc = src.byGrapheme.array, originIndices = [];
+    // originIndices is a stacks of indices where the interpret has to return to for when one or more repeats are in use
+    auto gsrc = src.byGrapheme.array, originIndices = [], currentBlock = 0;
     
     for (size_t i, line = 1, column = 1; i < gsrc.length; ++i, ++column)
     {
