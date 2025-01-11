@@ -1,4 +1,4 @@
-import raylib_misc;
+import door;
 import std.string;
 import std.array;
 import std.stdio;
@@ -76,7 +76,12 @@ void read(string src)
 
 void main(string[] args)
 {
-    audio = AudioDevice.getInstance;
+    InitWindow(120, 100, "Test");
+    SetTargetFPS(30);
+
+    ad = AudioDevice.getInstance;
+    while (!ad.isReady){}
+    ad.setVolume(1);
     
     noises = 
     [
@@ -89,4 +94,5 @@ void main(string[] args)
     ];
     
     read("👋");
+    ad.close;
 }
