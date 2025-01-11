@@ -1,4 +1,5 @@
 import door;
+import raylib;
 import std.string;
 import std.array;
 import std.stdio;
@@ -79,7 +80,7 @@ void main(string[] args)
     InitWindow(120, 100, "Test");
     SetTargetFPS(30);
 
-    ad = AudioDevice.getInstance;
+    auto ad = AudioDevice.getInstance;
     while (!ad.isReady){}
     ad.setVolume(1);
     
