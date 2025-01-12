@@ -14,7 +14,7 @@ AudioDevice audio;
 Snd[] noises;
 
 ubyte memoryPointer,
-      sound, // in drawing mode, this is colour
+      sound, // in drawing mode, this is colour using the tqrrggbb system
       registerA,
       registerB;
 
@@ -83,6 +83,35 @@ auto preprocess(string src)
     src = src.replace("🪬", "°");
 
     return src;
+}
+
+ubyte quarterToValue(ubyte bitValue)
+{
+    switch (bitValue & 0b0000_0011)
+    {
+        case 1:  return 64;
+        case 2:  return 128;
+        case 3:  return 255;
+        default: return 0;
+    }
+}
+
+// transparency quality red red green green blue blue
+// transparency 1 and quality 0 -> 50% transparent / 50% opaque
+// transparency 1 and quality 1 -> 75% transparent / 25% opaque
+// transparency 0 and quality 1 -> 50% darker
+auto toColor(ubyte tqrrggbb)
+{
+    ubyte quality = (tqrrggbb >> 7) | ((tqrrggbb & 0b0100_0000) >> 5);
+    ubyte opacity = quality != 3 ? quality == 1 ? 128 : 255 : 64;
+    ubyte red     = quarterToValue(tqrrggbb >> 4);
+    ubyte green   = quarterToValue(tqrrggbb >> 2);
+    ubyte blue    = tqrrggbb.quarterToValue;
+
+    if (quality == 2)
+        return Color(red >> 1, green >> 1, blue >> 1, opacity);
+
+    return Color(red, green, blue, opacity);
 }
 
 void main(string[] args)
