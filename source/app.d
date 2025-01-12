@@ -6,73 +6,83 @@ import std.stdio;
 import std.conv;
 import std.uni;
 
-enum maxSound = 5,
-     minSound = 0,
-     memSize  = 250,
+enum memSize   = 250,
+     colorPath = "palette.csv",
      noisePath = "noise/%s.mp3";
 
 AudioDevice audio;
 Snd[] noises;
 
 ubyte memoryPointer,
-      sound,
+      sound, // in drawing mode, this is colour
       registerA,
       registerB;
-        
-auto volume = 0f, debugging = false;
-        
+
+auto volume    = 0f,
+     debugging = false,
+     mode      = true; // true == noise making    false == drawing
+
 ubyte[memSize] memory;
 
 /*
-  "👋", /+ play                  +/
+  "👋", /+ play/draw             +/
   "✋", /+ end if/repeat/comment +/
+  "✍️", /+ change mode           +/
   "👌", /+ repeat                +/
   "✌", /+ store to volume       +/
   "🤘", /+ store to sound type   +/
-  "👈", /+ move + 1              +/
-  "👉", /+ move - 1              +/
+  "🖖", /+ store to delay        +/
+  "🫳", /+ store to current mem  +/
+  "👈", /+ increment mem pointer +/
+  "👉", /+ decrement mem pointer +/
   "👆", /+ increment             +/
   "👇", /+ decrement             +/
   "👍", /+ a higher than b       +/
   "👎", /+ a lower than b        +/
+  "🫰", /+ a different from b    +/
   "✊", /+ store to register a   +/
   "👊", /+ store to register b   +/
   "🫲", /+ from register a       +/
   "🫱", /+ from register b       +/
+  "🫴"  /+ from current mem      +/
   "🤌", /+ comment               +/
   "🖕", /+ break from repeat     +/
   "🤏", /+ next iteration        +/
+  "🤞", /+ load random num in a  +/
+  "🤙", /+ log value             +/
   "🪬", /+ log all values        +/
 */
 
-void read(string src)
+auto preprocess(string src)
 {
-    // originIndices is a stacks of indices where the interpret has to return to for when one or more repeats are in use
-    auto gsrc = src.byGrapheme.array, originIndices = [], currentBlock = 0;
-    
-    for (size_t i, line = 1, column = 1; i < gsrc.length; ++i, ++column)
-    {
-        auto current = gsrc[i].array.byCodePoint.text;
-        
-        switch (current)
-        {
-            case " ": continue;
-            
-            case "\n":
-                column = 0;
-                ++line;
-                break;
-                
-            case "👋": 
-            writeln("Reached here"); 
-            break;
-            
-            default:
-                if (debugging) 
-                    "Unrecognised glyph at line %d and column %d: %s".format(line, column, current).writeln;
-            break;
-        }
-    }
+    src = src.replace(" ", "");
+    src = src.replace("👋", "#");
+    src = src.replace("✋", "!");
+    src = src.replace("✍️", "~");
+    src = src.replace("✌", "£");
+    src = src.replace("🤘", "±");
+    src = src.replace("🖖", "%");
+    src = src.replace("🫳", "(");
+    src = src.replace("👈", "«");
+    src = src.replace("👉", "»");
+    src = src.replace("👆", "+");
+    src = src.replace("👇", "-");
+    src = src.replace("👍", ">");
+    src = src.replace("👎", "<");
+    src = src.replace("🫰", "@");
+    src = src.replace("✊", "¶");
+    src = src.replace("👊", "$");
+    src = src.replace("🫲", "?");
+    src = src.replace("🫱", "¦");
+    src = src.replace("🫴", ")");
+    src = src.replace("🤌", "§");
+    src = src.replace("🖕", "¢");
+    src = src.replace("🤏", "¤");
+    src = src.replace("🤞", "µ");
+    src = src.replace("🤙", "&");
+    src = src.replace("🪬", "°");
+
+    return src;
 }
 
 void main(string[] args)
@@ -94,6 +104,5 @@ void main(string[] args)
         new Snd(noisePath.format("slap"))
     ];
     
-    read("👋");
     ad.close;
 }
