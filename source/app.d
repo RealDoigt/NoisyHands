@@ -6,9 +6,58 @@ import std.stdio;
 import std.conv;
 import std.uni;
 
-enum memSize   = 250,
-     colorPath = "palette.csv",
-     noisePath = "noise/%s.mp3";
+enum makingNoises = true,
+     drawing      = false,
+     memSize      = 250,
+     noisePath    = "noise/%s.mp3";
+
+enum TokenParts
+{
+    none,
+    end,
+    change,
+    repeat,
+    storeVolume,
+    storeSound,
+    storeDelay,
+    storeMemory,
+    storeRegisterA,
+    storeRegisterB,
+    incrementMemoryPointer,
+    decrementMemoryPointer,
+    increment,
+    decrement,
+    higherThan,
+    lowerThan,
+    differentThan,
+    fromRegisterA,
+    fromRegisterB,
+    fromMemory,
+    breakRepeat,
+    continueRepeat,
+    randomNumber,
+    log,
+    logEverything
+}
+
+enum ErrorTypes
+{
+    noError,
+    missingStorage,  // where is it supposed to store the data?
+    missingLocation, // from where does it store the data?
+    missingRegister, // which register should be incremented?
+    wrongIncrement,  // trying to increment memory directly
+    negativePointer, // memory pointer is negative
+    nothingBreaks,   // no repeat loop to break from
+    nothingContinues,// no repeat loop to continue
+}
+
+struct Token
+{
+    TokenParts tp1, tp2;
+    int character, line;
+    ErrorTypes error;
+}
 
 AudioDevice audio;
 Snd[] noises;
@@ -19,8 +68,8 @@ ubyte memoryPointer,
       registerB;
 
 auto volume    = 0f,
-     debugging = false,
-     mode      = true; // true == noise making    false == drawing
+     debugging = false, // log emojis are ignored when debugging is set to false
+     mode      = makingNoises; // true == making noises    false == drawing
 
 ubyte[memSize] memory;
 
@@ -53,7 +102,7 @@ ubyte[memSize] memory;
   "🪬", /+ log all values        +/
 */
 
-auto preprocess(string src)
+auto scan(string src)
 {
     src = src.replace(" ", "");
     src = src.replace("👋", "#");
