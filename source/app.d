@@ -14,6 +14,7 @@ enum makingNoises = true,
 enum TokenParts
 {
     none,
+    play,
     end,
     change,
     repeat,
@@ -50,13 +51,42 @@ enum ErrorTypes
     negativePointer, // memory pointer is negative
     nothingBreaks,   // no repeat loop to break from
     nothingContinues,// no repeat loop to continue
+    nothingEnds,     // no if/loop/comment to end
+    invalidToken
 }
 
 struct Token
 {
     TokenParts tp1, tp2;
-    int character, line;
+    int column, line;
     ErrorTypes error;
+
+    this(TokenParts tp1, TokenParts tp2, int column, int line, ErrorTypes error = ErrorTypes.noError)
+    {
+        this.tp1    = tp1;
+        this.tp2    = tp2;
+        this.column = column;
+        this.line   = line;
+        this.error  = error;
+    }
+
+    this(TokenParts tp1, int column, int line, ErrorTypes error = ErrorTypes.noError)
+    {
+        this.tp1    = tp1;
+        this.tp2    = TokenParts.none;
+        this.column = column;
+        this.line   = line;
+        this.error  = error;
+    }
+
+    this(int column, int line)
+    {
+        this.tp1    = TokenParts.none;
+        this.tp2    = TokenParts.none;
+        this.column = column;
+        this.line   = line;
+        this.error  = ErrorTypes.invalidToken;
+    }
 }
 
 AudioDevice audio;
@@ -102,12 +132,13 @@ ubyte[memSize] memory;
   "🪬", /+ log all values        +/
 */
 
+// probably the closest thing to a scanner in the old traditional sense
 auto scan(string src)
 {
-    src = src.replace(" ", "");
     src = src.replace("👋", "#");
     src = src.replace("✋", "!");
     src = src.replace("✍️", "~");
+    src = src.replace("👌", "*");
     src = src.replace("✌", "£");
     src = src.replace("🤘", "±");
     src = src.replace("🖖", "%");
@@ -132,6 +163,38 @@ auto scan(string src)
     src = src.replace("🪬", "°");
 
     return src;
+}
+
+auto lex(string scannedSrc)
+{
+
+    int index, line = 1, column = 1;
+    Token[] tokens;
+    char current;
+
+    while (index < scannedSrc.length)
+    {
+        switch (scannedSrc[index])
+        {
+            // monopart tokens
+            case '#': tokens ~= Token(TokenParts.play, column, line);   break;
+            case '!': tokens ~= Token(TokenParts.end, column, line);    break;
+            case '~': tokens ~= Token(TokenParts.change, column, line); break;
+            case '*': tokens ~= Token(TokenParts.repeat, column, line); break;
+
+            // tokens used incorrectly
+            case '£': tokens ~= Token(TokenParts.storeVolume, column, line, ErrorTypes.missingLocation);    break;
+            case '±': tokens ~= Token(TokenParts.storeSound, column, line, ErrorTypes.missingLocation);     break;
+            case '%': tokens ~= Token(TokenParts.storeDelay, column, line, ErrorTypes.missingLocation);     break;
+            case '(': tokens ~= Token(TokenParts.storeMemory, column, line, ErrorTypes.missingLocation);    break;
+            case '¶': tokens ~= Token(TokenParts.storeRegisterA, column, line, ErrorTypes.missingLocation); break;
+            case '$': tokens ~= Token(TokenParts.storeRegisterB, column, line, ErrorTypes.missingLocation); break;
+            case '&': tokens ~= Token(TokenParts.log, column, line, ErrorTypes.missingLocation);            break;
+            default: tokens ~= Token(column, line);
+        }
+
+        ++index;
+    }
 }
 
 ubyte quarterToValue(ubyte bitValue)
