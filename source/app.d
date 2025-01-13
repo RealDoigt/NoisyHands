@@ -242,7 +242,9 @@ void main(string[] args)
         new Snd(noisePath.format("crack")),
         new Snd(noisePath.format("punch")),
         new Snd(noisePath.format("scratch")),
-        new Snd(noisePath.format("slap"))
+        new Snd(noisePath.format("slap")),
+        new Snd(noisePath.format("tap")),
+        new Snd(noisePath.format("taps"))
     ];
     
     ad.close;
