@@ -112,8 +112,8 @@ ubyte[memSize] memory;
   "🤘", /+ store to sound type   +/
   "🖖", /+ store to delay        +/
   "🫳", /+ store to current mem  +/
-  "👈", /+ increment mem pointer +/
-  "👉", /+ decrement mem pointer +/
+  "👈", /+ decrement mem pointer +/
+  "👉", /+ increment mem pointer +/
   "👆", /+ increment             +/
   "👇", /+ decrement             +/
   "👍", /+ a higher than b       +/
@@ -177,24 +177,49 @@ auto lex(string scannedSrc)
         switch (scannedSrc[index])
         {
             // monopart tokens
-            case '#': tokens ~= Token(TokenParts.play, column, line);   break;
-            case '!': tokens ~= Token(TokenParts.end, column, line);    break;
+            case '#': tokens ~= Token(TokenParts.play, column, line); break;
+            case '!': tokens ~= Token(TokenParts.end, column, line); break;
             case '~': tokens ~= Token(TokenParts.change, column, line); break;
             case '*': tokens ~= Token(TokenParts.repeat, column, line); break;
+            case '«': tokens ~= Token(TokenParts.decrementMemoryPointer, column, line); break;
+            case '»': tokens ~= Token(TokenParts.incrementMemoryPointer, column, line); break;
+
+            case '+':
+                if (index + 1 < scannedSrc.length)
+                {
+                    switch(scannedSrc[index + 1])
+                    {
+                        case '?':
+                            tokens ~= Token(TokenParts.increment, TokenParts.fromRegisterA, column, line);
+                            break;
+                        case '¦':
+                            tokens ~= Token(TokenParts.increment, TokenParts.fromRegisterB, column, line);
+                            break;
+                        case ')':
+                            tokens ~= Token(TokenParts.increment, TokenParts.fromMemory, column, line, ErrorTypes.wrongIncrement);
+                            break;
+                        default:
+                            tokens ~= Token(TokenParts.increment, column, line, ErrorTypes.missingRegister);
+                    }
+                }
+                else tokens ~= Token(TokenParts.increment, column, line, ErrorTypes.missingRegister);
+                break;
 
             // tokens used incorrectly
-            case '£': tokens ~= Token(TokenParts.storeVolume, column, line, ErrorTypes.missingLocation);    break;
-            case '±': tokens ~= Token(TokenParts.storeSound, column, line, ErrorTypes.missingLocation);     break;
-            case '%': tokens ~= Token(TokenParts.storeDelay, column, line, ErrorTypes.missingLocation);     break;
-            case '(': tokens ~= Token(TokenParts.storeMemory, column, line, ErrorTypes.missingLocation);    break;
+            case '£': tokens ~= Token(TokenParts.storeVolume, column, line, ErrorTypes.missingLocation); break;
+            case '±': tokens ~= Token(TokenParts.storeSound, column, line, ErrorTypes.missingLocation); break;
+            case '%': tokens ~= Token(TokenParts.storeDelay, column, line, ErrorTypes.missingLocation); break;
+            case '(': tokens ~= Token(TokenParts.storeMemory, column, line, ErrorTypes.missingLocation); break;
             case '¶': tokens ~= Token(TokenParts.storeRegisterA, column, line, ErrorTypes.missingLocation); break;
             case '$': tokens ~= Token(TokenParts.storeRegisterB, column, line, ErrorTypes.missingLocation); break;
-            case '&': tokens ~= Token(TokenParts.log, column, line, ErrorTypes.missingLocation);            break;
+            case '&': tokens ~= Token(TokenParts.log, column, line, ErrorTypes.missingLocation); break;
             default: tokens ~= Token(column, line);
         }
 
         ++index;
     }
+
+    return tokens;
 }
 
 ubyte quarterToValue(ubyte bitValue)
