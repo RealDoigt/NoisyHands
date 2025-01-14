@@ -209,6 +209,8 @@ auto lex(string scannedSrc)
                         default:
                             tokens ~= Token(TokenParts.increment, column, line, ErrorTypes.missingRegister);
                     }
+
+                    ++index;
                 }
                 else tokens ~= Token(TokenParts.increment, column, line, ErrorTypes.missingRegister);
                 break;
@@ -230,6 +232,8 @@ auto lex(string scannedSrc)
                         default:
                             tokens ~= Token(TokenParts.decrement, column, line, ErrorTypes.missingRegister);
                     }
+
+                    ++index;
                 }
                 else tokens ~= Token(TokenParts.decrement, column, line, ErrorTypes.missingRegister);
                 break;
