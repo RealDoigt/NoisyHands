@@ -238,6 +238,13 @@ auto lex(string scannedSrc)
                 else tokens ~= Token(TokenParts.decrement, column, line, ErrorTypes.missingRegister);
                 break;
 
+            case '§':
+                while (index + 1 < scannedSrc.length || scannedSrc[index + 1] != '!')
+                    ++index; // consumming the commented out characters
+
+                break;
+
+
             // tokens used incorrectly
             case '£': tokens ~= Token(TokenParts.storeVolume, column, line, ErrorTypes.missingLocation); break;
             case '±': tokens ~= Token(TokenParts.storeSound, column, line, ErrorTypes.missingLocation); break;
