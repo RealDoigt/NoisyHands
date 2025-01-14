@@ -28,7 +28,7 @@ enum TokenParts
     decrementMemoryPointer,
     increment,
     decrement,
-    higherThan,
+    greaterThan,
     lowerThan,
     differentThan,
     fromRegisterA,
@@ -183,6 +183,14 @@ auto lex(string scannedSrc)
             case '*': tokens ~= Token(TokenParts.repeat, column, line); break;
             case '«': tokens ~= Token(TokenParts.decrementMemoryPointer, column, line); break;
             case '»': tokens ~= Token(TokenParts.incrementMemoryPointer, column, line); break;
+            case '>': tokens ~= Token(TokenParts.greaterThan, column, line); break;
+            case '<': tokens ~= Token(TokenParts.lowerThan, column, line); break;
+            case '@': tokens ~= Token(TokenParts.differentThan, column, line); break;
+            case '¢': tokens ~= Token(TokenParts.breakRepeat, column, line); break;
+            case '¤': tokens ~= Token(TokenParts.continueRepeat, column, line); break;
+            case 'µ': tokens ~= Token(TokenParts.randomNumber, column, line); break;
+            case '°': tokens ~= Token(TokenParts.logEverything, column, line); break;
+
 
             case '+':
                 if (index + 1 < scannedSrc.length)
