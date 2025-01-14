@@ -44,7 +44,6 @@ enum TokenParts
 enum ErrorTypes
 {
     noError,
-    missingStorage,  // where is it supposed to store the data?
     missingLocation, // from where does it store the data?
     missingRegister, // which register should be incremented?
     wrongIncrement,  // trying to increment memory directly
@@ -170,7 +169,6 @@ auto lex(string scannedSrc)
 
     int index, line = 1, column = 1;
     Token[] tokens;
-    char current;
 
     while (index < scannedSrc.length)
     {
@@ -191,7 +189,6 @@ auto lex(string scannedSrc)
             case 'µ': tokens ~= Token(TokenParts.randomNumber, column, line); break;
             case '°': tokens ~= Token(TokenParts.logEverything, column, line); break;
 
-
             case '+':
                 if (index + 1 < scannedSrc.length)
                 {
@@ -200,12 +197,15 @@ auto lex(string scannedSrc)
                         case '?':
                             tokens ~= Token(TokenParts.increment, TokenParts.fromRegisterA, column, line);
                             break;
+
                         case '¦':
                             tokens ~= Token(TokenParts.increment, TokenParts.fromRegisterB, column, line);
                             break;
+
                         case ')':
                             tokens ~= Token(TokenParts.increment, TokenParts.fromMemory, column, line, ErrorTypes.wrongIncrement);
                             break;
+
                         default:
                             tokens ~= Token(TokenParts.increment, column, line, ErrorTypes.missingRegister);
                     }
@@ -223,12 +223,15 @@ auto lex(string scannedSrc)
                         case '?':
                             tokens ~= Token(TokenParts.decrement, TokenParts.fromRegisterA, column, line);
                             break;
+
                         case '¦':
                             tokens ~= Token(TokenParts.decrement, TokenParts.fromRegisterB, column, line);
                             break;
+
                         case ')':
                             tokens ~= Token(TokenParts.decrement, TokenParts.fromMemory, column, line, ErrorTypes.wrongIncrement);
                             break;
+
                         default:
                             tokens ~= Token(TokenParts.decrement, column, line, ErrorTypes.missingRegister);
                     }
@@ -244,6 +247,31 @@ auto lex(string scannedSrc)
 
                 break;
 
+            case '&':
+                if (index + 1 < scannedSrc.length)
+                {
+                    switch (scannedSrc[index + 1])
+                    {
+                        case '?':
+                            tokens ~= Token(TokenParts.log, TokenParts.fromRegisterA, column, line);
+                            break;
+
+                        case '¦':
+                            tokens ~= Token(TokenParts.log, TokenParts.fromRegisterB, column, line);
+                            break;
+
+                        case ')':
+                            tokens ~= Token(TokenParts.log, TokenParts.fromMemory, column, line);
+                            break;
+
+                        default:
+                            tokens ~= Token(TokenParts.log, column, line, ErrorTypes.missingLocation);
+                    }
+
+                    ++index;
+                }
+                else tokens ~= Token(TokenParts.log, column, line, ErrorTypes.missingLocation);
+                break;
 
             // tokens used incorrectly
             case '£': tokens ~= Token(TokenParts.storeVolume, column, line, ErrorTypes.missingLocation); break;
