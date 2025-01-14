@@ -205,6 +205,27 @@ auto lex(string scannedSrc)
                 else tokens ~= Token(TokenParts.increment, column, line, ErrorTypes.missingRegister);
                 break;
 
+            case '-':
+                if (index - 1 > -1)
+                {
+                    switch(scannedSrc[index - 1])
+                    {
+                        case '?':
+                            tokens ~= Token(TokenParts.decrement, TokenParts.fromRegisterA, column, line);
+                            break;
+                        case '¦':
+                            tokens ~= Token(TokenParts.decrement, TokenParts.fromRegisterB, column, line);
+                            break;
+                        case ')':
+                            tokens ~= Token(TokenParts.decrement, TokenParts.fromMemory, column, line, ErrorTypes.wrongIncrement);
+                            break;
+                        default:
+                            tokens ~= Token(TokenParts.decrement, column, line, ErrorTypes.missingRegister);
+                    }
+                }
+                else tokens ~= Token(TokenParts.decrement, column, line, ErrorTypes.missingRegister);
+                break;
+
             // tokens used incorrectly
             case '£': tokens ~= Token(TokenParts.storeVolume, column, line, ErrorTypes.missingLocation); break;
             case '±': tokens ~= Token(TokenParts.storeSound, column, line, ErrorTypes.missingLocation); break;
