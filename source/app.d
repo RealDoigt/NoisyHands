@@ -189,88 +189,10 @@ auto lex(string scannedSrc)
             case 'µ': tokens ~= Token(TokenParts.randomNumber, column, line); break;
             case '°': tokens ~= Token(TokenParts.logEverything, column, line); break;
 
-            case '+':
-                if (index + 1 < scannedSrc.length)
-                {
-                    switch(scannedSrc[index + 1])
-                    {
-                        case '?':
-                            tokens ~= Token(TokenParts.increment, TokenParts.fromRegisterA, column, line);
-                            break;
-
-                        case '¦':
-                            tokens ~= Token(TokenParts.increment, TokenParts.fromRegisterB, column, line);
-                            break;
-
-                        case ')':
-                            tokens ~= Token(TokenParts.increment, TokenParts.fromMemory, column, line, ErrorTypes.wrongIncrement);
-                            break;
-
-                        default:
-                            tokens ~= Token(TokenParts.increment, column, line, ErrorTypes.missingRegister);
-                    }
-
-                    ++index;
-                }
-                else tokens ~= Token(TokenParts.increment, column, line, ErrorTypes.missingRegister);
-                break;
-
-            case '-':
-                if (index - 1 > -1)
-                {
-                    switch(scannedSrc[index - 1])
-                    {
-                        case '?':
-                            tokens ~= Token(TokenParts.decrement, TokenParts.fromRegisterA, column, line);
-                            break;
-
-                        case '¦':
-                            tokens ~= Token(TokenParts.decrement, TokenParts.fromRegisterB, column, line);
-                            break;
-
-                        case ')':
-                            tokens ~= Token(TokenParts.decrement, TokenParts.fromMemory, column, line, ErrorTypes.wrongIncrement);
-                            break;
-
-                        default:
-                            tokens ~= Token(TokenParts.decrement, column, line, ErrorTypes.missingRegister);
-                    }
-
-                    ++index;
-                }
-                else tokens ~= Token(TokenParts.decrement, column, line, ErrorTypes.missingRegister);
-                break;
-
             case '§':
                 while (index + 1 < scannedSrc.length || scannedSrc[index + 1] != '!')
                     ++index; // consumming the commented out characters
 
-                break;
-
-            case '&':
-                if (index + 1 < scannedSrc.length)
-                {
-                    switch (scannedSrc[index + 1])
-                    {
-                        case '?':
-                            tokens ~= Token(TokenParts.log, TokenParts.fromRegisterA, column, line);
-                            break;
-
-                        case '¦':
-                            tokens ~= Token(TokenParts.log, TokenParts.fromRegisterB, column, line);
-                            break;
-
-                        case ')':
-                            tokens ~= Token(TokenParts.log, TokenParts.fromMemory, column, line);
-                            break;
-
-                        default:
-                            tokens ~= Token(TokenParts.log, column, line, ErrorTypes.missingLocation);
-                    }
-
-                    ++index;
-                }
-                else tokens ~= Token(TokenParts.log, column, line, ErrorTypes.missingLocation);
                 break;
 
             // tokens used incorrectly
