@@ -44,6 +44,7 @@ enum TokenParts
 enum ErrorTypes
 {
     noError,
+    missingStorage,  // where is it supposed to store the data?
     missingLocation, // from where does it store the data?
     missingRegister, // which register should be incremented?
     wrongIncrement,  // trying to increment memory directly
@@ -189,10 +190,13 @@ auto lex(string scannedSrc)
             case 'µ': tokens ~= Token(TokenParts.randomNumber, column, line); break;
             case '°': tokens ~= Token(TokenParts.logEverything, column, line); break;
 
+            case '?': break; // TODO
+            case '¦': break; // TODO
+            case ')': break; // TODO
+
             case '§':
                 while (index + 1 < scannedSrc.length || scannedSrc[index + 1] != '!')
                     ++index; // consumming the commented out characters
-
                 break;
 
             // tokens used incorrectly
@@ -203,6 +207,8 @@ auto lex(string scannedSrc)
             case '¶': tokens ~= Token(TokenParts.storeRegisterA, column, line, ErrorTypes.missingLocation); break;
             case '$': tokens ~= Token(TokenParts.storeRegisterB, column, line, ErrorTypes.missingLocation); break;
             case '&': tokens ~= Token(TokenParts.log, column, line, ErrorTypes.missingLocation); break;
+            case '+': tokens ~= Token(TokenParts.increment, column, line, ErrorTypes.missingRegister); break;
+            case '-': tokens ~= Token(TokenParts.decrement, column, line, ErrorTypes.missingRegister); break;
             default: tokens ~= Token(column, line);
         }
 
