@@ -165,6 +165,11 @@ auto scan(string src)
     return src;
 }
 
+template GenCase(string op)
+{
+    const char[] GenCase = "";
+}
+
 auto lex(string scannedSrc)
 {
 
@@ -190,7 +195,24 @@ auto lex(string scannedSrc)
             case 'µ': tokens ~= Token(TokenParts.randomNumber, column, line); break;
             case '°': tokens ~= Token(TokenParts.logEverything, column, line); break;
 
-            case '?': break; // TODO
+            case '?':
+                if (index + 1 < scannedSrc.length)
+                {
+                    switch (scannedSrc[index + 1])
+                    {
+                        case '£': tokens ~= Token(TokenParts.fromRegisterA, TokenParts.storeVolume, column, line); break;
+                        case '±': tokens ~= Token(TokenParts.fromRegisterA, TokenParts.storeSound, column, line); break;
+                        case '%': tokens ~= Token(TokenParts.fromRegisterA, TokenParts.storeDelay, column, line); break;
+                        case '(': tokens ~= Token(TokenParts.fromRegisterA, TokenParts.storeMemory, column, line); break;
+                        case '¶': tokens ~= Token(TokenParts.fromRegisterA, TokenParts.storeRegisterA, column, ErrorTypes.invalidToken); break;
+                        case '$': tokens
+
+                    }
+                    ++index;
+                }
+
+                else tokens ~= Token(TokenParts.fromRegisterA, column, line, ErrorTypes.missingStorage);
+                break; // TODO
             case '¦': break; // TODO
             case ')': break; // TODO
 
