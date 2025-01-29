@@ -165,6 +165,7 @@ auto scan(string src)
     return src;
 }
 
+// TODO:
 template GenCase(string op)
 {
     const char[] GenCase = "";
@@ -219,10 +220,10 @@ auto lex(string scannedSrc)
                 {
                     switch (scannedSrc[index + 1])
                     {
-                        case '£': tokens ~= Token(TokenParts.fromRegisterB, TokenParts.storeVolume, column, line); break;
-                        case '±': tokens ~= Token(TokenParts.fromRegisterB, TokenParts.storeSound, column, line); break;
-                        case '%': tokens ~= Token(TokenParts.fromRegisterB, TokenParts.storeDelay, column, line); break;
-                        case '(': tokens ~= Token(TokenParts.fromRegisterB, TokenParts.storeMemory, column, line); break;
+                        case '£': tokens ~= Token(TokenParts.fromRegisterB, TokenParts.storeVolume, column, line, ErrorTypes.missingRegister); break;
+                        case '±': tokens ~= Token(TokenParts.fromRegisterB, TokenParts.storeSound, column, line, ErrorTypes.missingRegister); break;
+                        case '%': tokens ~= Token(TokenParts.fromRegisterB, TokenParts.storeDelay, column, line, ErrorTypes.missingRegister); break;
+                        case '(': tokens ~= Token(TokenParts.fromRegisterB, TokenParts.storeMemory, column, line, ErrorTypes.missingRegister); break;
                         case '¶': tokens ~= Token(TokenParts.fromRegisterB, TokenParts.storeRegisterA, column, line); break;
                         case '$': tokens ~= Token(TokenParts.fromRegisterB, TokenParts.storeRegisterB, column, line, ErrorTypes.invalidToken); break;
                         default: tokens ~= Token(TokenParts.fromRegisterB, column, line, ErrorTypes.invalidToken);
@@ -233,7 +234,24 @@ auto lex(string scannedSrc)
                 else tokens ~= Token(TokenParts.fromRegisterB, column, line, ErrorTypes.missingStorage);
             break;
 
-            case ')': break; // TODO
+            case ')':
+                if (index + 1 < scannedSrc.length)
+                {
+                    switch (scannedSrc[index + 1])
+                    {
+                        case '£': tokens ~= Token(TokenParts.fromMemory, TokenParts.storeVolume, column, line); break;
+                        case '±': tokens ~= Token(TokenParts.fromMemory, TokenParts.storeSound, column, line); break;
+                        case '%': tokens ~= Token(TokenParts.fromMemory, TokenParts.storeDelay, column, line); break;
+                        case '(': tokens ~= Token(TokenParts.fromMemory, TokenParts.storeMemory, column, line, ErrorTypes.invalidToken); break;
+                        case '¶': tokens ~= Token(TokenParts.fromMemory, TokenParts.storeRegisterA, column, line); break;
+                        case '$': tokens ~= Token(TokenParts.fromMemory, TokenParts.storeRegisterB, column, line); break;
+                        default: tokens ~= Token(TokenParts.fromMemory, column, line, ErrorTypes.invalidToken);
+                    }
+                    ++index;
+                }
+
+                else tokens ~= Token(TokenParts.fromMemory, column, line, ErrorTypes.missingStorage);
+            break;
 
             case '§':
                 while (index + 1 < scannedSrc.length || scannedSrc[index + 1] != '!')
