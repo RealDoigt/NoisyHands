@@ -204,15 +204,16 @@ auto lex(string scannedSrc)
                         case '±': tokens ~= Token(TokenParts.fromRegisterA, TokenParts.storeSound, column, line); break;
                         case '%': tokens ~= Token(TokenParts.fromRegisterA, TokenParts.storeDelay, column, line); break;
                         case '(': tokens ~= Token(TokenParts.fromRegisterA, TokenParts.storeMemory, column, line); break;
-                        case '¶': tokens ~= Token(TokenParts.fromRegisterA, TokenParts.storeRegisterA, column, ErrorTypes.invalidToken); break;
-                        case '$': tokens
-
+                        case '¶': tokens ~= Token(TokenParts.fromRegisterA, TokenParts.storeRegisterA, column, line, ErrorTypes.invalidToken); break;
+                        case '$': tokens ~= Token(TokenParts.fromRegisterA, TokenParts.storeRegisterB, column, line); break;
+                        default: tokens ~= Token(TokenParts.fromRegisterA, column, line, ErrorTypes.invalidToken);
                     }
                     ++index;
                 }
 
                 else tokens ~= Token(TokenParts.fromRegisterA, column, line, ErrorTypes.missingStorage);
-                break; // TODO
+                break;
+
             case '¦': break; // TODO
             case ')': break; // TODO
 
